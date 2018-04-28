@@ -1,0 +1,28 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id = "init-test-table" author = "ipukhov">
+        <createTable tableName="test_table">
+            <column name="id" type="numeric">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(2048)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id= "init-db">
+        <createTable tableName="contractor" remarks="Контрагенты">
+            <column name="id" type="numeric" remarks="ID контрагента">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="short_name" type="varchar(1000)" remarks="Краткое наименование контрагента"/>
+            <column name="full_name" type="varchar(1000)" remarks="Полное наименование контрагента"/>
+            <column name="inn" type="varchar(1000)" remarks="ИНH контрагента"/>
+        </createTable>
+        <createSequence sequnceId="contractor_seq" minValue="1000"/>
+    </changeSet>
+
+</databaseChangeLog>
