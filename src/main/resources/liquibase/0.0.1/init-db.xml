@@ -13,7 +13,7 @@
             <column name="name" type="varchar(2048)"/>
         </createTable>
     </changeSet>
-    <changeSet id= "init-db">
+    <changeSet id= "init-db" author="ipukhov">
         <createTable tableName="contractor" remarks="Контрагенты">
             <column name="id" type="numeric" remarks="ID контрагента">
                 <constraints primaryKey="true" nullable="false"/>
@@ -22,7 +22,7 @@
             <column name="full_name" type="varchar(1000)" remarks="Полное наименование контрагента"/>
             <column name="inn" type="varchar(1000)" remarks="ИНH контрагента"/>
         </createTable>
-        <createSequence sequnceId="contractor_seq" minValue="1000"/>
+        <createSequence sequenceName="contractor_seq" minValue="1000"/>
     </changeSet>
 
 </databaseChangeLog>

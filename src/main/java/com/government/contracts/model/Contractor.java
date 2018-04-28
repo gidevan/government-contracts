@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
 @Entity
-public class Contractor {
+public class Contractor implements Identifiable<Long> {
 
     @Id
     @GeneratedValue(generator="contractor_seq")
