@@ -35,7 +35,7 @@ public abstract class AbstractRepositoryTest<T extends Identifiable<ID>, ID> {
         T savedEntity = getRepository().save(entity);
         Assert.assertNotNull(savedEntity);
         Assert.assertNotNull(savedEntity.getId());
-
+        assertEntity(savedEntity);
         Optional<T> stored = getRepository().findById(savedEntity.getId());
         Assert.assertTrue(stored.isPresent());
     }
@@ -58,4 +58,6 @@ public abstract class AbstractRepositoryTest<T extends Identifiable<ID>, ID> {
     protected abstract T createEntity();
 
     protected abstract CrudRepository<T, ID> getRepository();
+
+    protected abstract void assertEntity(T entity);
 }
