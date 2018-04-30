@@ -1,7 +1,6 @@
 package com.government.contracts.utils;
 
-import com.government.contracts.model.Contract;
-import com.government.contracts.model.Contractor;
+import com.government.contracts.model.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +12,9 @@ public final class TestEntityFactory {
     private static final String SHORT_PREFIX = "short_";
     private static final String FULL_PREFIX = "full_";
     private static final long DATE_STEP = 2L;
+
+    public static final BigDecimal TEST_CONTRACT_PRICE = BigDecimal.TEN;
+    public static final BigDecimal TEST_PRICE = BigDecimal.ONE;
     private TestEntityFactory() {
 
 
@@ -33,7 +35,38 @@ public final class TestEntityFactory {
         contract.setContractCode(contractCode);
         contract.setContractStartDate(LocalDateTime.now());
         contract.setContractEndDate(LocalDateTime.now().plusMonths(DATE_STEP));
-        contract.setContractPrice(BigDecimal.TEN);
+        contract.setContractPrice(TEST_CONTRACT_PRICE);
         return contract;
+    }
+
+    public static final AdditionalAgreement createAdditionalAgreement(Long contractId, String agreementNumber, String agreementName) {
+        AdditionalAgreement additionalAgreement = new AdditionalAgreement();
+        additionalAgreement.setContractPrice(TEST_CONTRACT_PRICE);
+        additionalAgreement.setPrice(TEST_PRICE);
+        additionalAgreement.setContractId(contractId);
+        additionalAgreement.setAgreeementNumber(agreementNumber);
+        additionalAgreement.setAgreementName(agreementName);
+        additionalAgreement.setStartDate(LocalDateTime.now());
+        additionalAgreement.setEndDate(LocalDateTime.now().plusMonths(DATE_STEP));
+        additionalAgreement.setAgreementDate(LocalDateTime.now());
+        return additionalAgreement;
+    }
+
+    public static final StageStatus createStageStatus(String statusName) {
+        StageStatus stageStatus = new StageStatus();
+        stageStatus.setStageName(statusName);
+        return stageStatus;
+    }
+
+    public static final Stage createStage(Long statusId,Long contractId, String name, String stageNumber) {
+        Stage stage = new Stage();
+        stage.setStageName(name);
+        stage.setStageStatusId(statusId);
+        stage.setContractId(contractId);
+        stage.setStartDate(LocalDateTime.now());
+        stage.setEndDate(LocalDateTime.now().plusMonths(DATE_STEP));
+        stage.setStageNumber(stageNumber);
+        stage.setPrice(TEST_PRICE);
+        return stage;
     }
 }

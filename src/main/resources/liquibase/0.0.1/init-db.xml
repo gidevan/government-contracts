@@ -5,14 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id = "init-test-table" author = "ipukhov">
-        <createTable tableName="test_table">
-            <column name="id" type="numeric">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="varchar(2048)"/>
-        </createTable>
-    </changeSet>
     <changeSet id= "init-db" author="ipukhov">
         <createTable tableName="contractor" remarks="Контрагенты">
             <column name="id" type="numeric" remarks="ID контрагента">
@@ -68,6 +60,47 @@
             <column name="price" type="float" remarks="Цена работ"/>
         </createTable>
         <createSequence sequenceName="additional_agreement_seq"/>
+
+        <createTable tableName="stage_status"  remarks="Статус этапа">
+            <column name="id" type="numeric" remarks="ID статуса этапа">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_stage_status"/>
+            </column>
+            <column name="stage_name" type="varchar(100)" remarks="Наименование этапа">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createSequence sequenceName="stage_name_seq" minValue="1000"/>
+        <insert tableName="stage_status">
+            <column name="id">1</column>
+            <column name="stage_name">Текущий</column>
+        </insert>
+        <insert tableName="stage_status">
+            <column name="id">2</column>
+            <column name="stage_name">Исключительный</column>
+        </insert>
+        <insert tableName="stage_status">
+            <column name="id">3</column>
+            <column name="stage_name">Закрытый</column>
+        </insert>
+        <createSequence sequenceName="stage_status_seq" minValue="1000"/>
+
+        <createTable tableName="stage" remarks="Этап">
+            <column name="id" type="numeric">
+                <constraints primaryKey="true" primaryKeyName="pk_stage" nullable="false"/>
+            </column>
+            <column name="stage_number" type="varchar(255)" remarks="Номер этапа"/>
+            <column name="stage_name" type="varchar(1000)" remarks="Наименование этапа"/>
+            <column name="stage_status_id" type="numeric" remarks="Id статуса этапа">
+                <constraints nullable="false" referencedTableName="stage_status" referencedColumnNames="id" foreignKeyName="fk_stage_status_id"/>
+            </column>
+            <column name="contract_id" type="numeric" remarks="id контракта">
+                <constraints nullable="false" referencedTableName="contract" referencedColumnNames="id" foreignKeyName="fk_stage_contract_id"/>
+            </column>
+            <column name="start_date" type="timestamp" remarks="Начало"/>
+            <column name="end_date" type="timestamp" remarks="Окончание"/>
+            <column name="price" type="float" remarks="Цена работ"/>
+        </createTable>
+        <createSequence sequenceName="stage_seq" minValue="1000"/>
     </changeSet>
 
 </databaseChangeLog>
