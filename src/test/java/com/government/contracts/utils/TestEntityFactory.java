@@ -69,4 +69,29 @@ public final class TestEntityFactory {
         stage.setPrice(TEST_PRICE);
         return stage;
     }
+
+    public static final PaymentType createPaymentType(String name) {
+        PaymentType paymentType = new PaymentType();
+        paymentType.setName(name);
+        return paymentType;
+    }
+
+    public static final Payment createPayment(Long paymentTypeId, String stageNumber) {
+        Payment payment = new Payment();
+        payment.setStageNumber(stageNumber);
+        payment.setPaymentTypeId(paymentTypeId);
+        payment.setPaymentDate(LocalDateTime.now());
+        payment.setPaymentSum(TEST_PRICE);
+        return payment;
+    }
+
+    public static final Act createAct(Long stageId, String actType, String stageNumber) {
+        Act act = new Act();
+        act.setActType(actType);
+        act.setStageId(stageId);
+        act.setStageNumber(stageNumber);
+        act.setActDate(LocalDateTime.now());
+        act.setStagePrice(TEST_PRICE);
+        return act;
+    }
 }

@@ -101,6 +101,54 @@
             <column name="price" type="float" remarks="Цена работ"/>
         </createTable>
         <createSequence sequenceName="stage_seq" minValue="1000"/>
+
+        <createTable tableName="payment_type" remarks="Тип оплаты">
+            <column name="id" type="numeric">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_payment_type"/>
+            </column>
+            <column name="name" type="varchar(100)"/>
+        </createTable>
+        <insert tableName="payment_type">
+            <column name="id">1</column>
+            <column name="name">Аванс</column>
+        </insert>
+        <insert tableName="payment_type">
+            <column name="id">2</column>
+            <column name="name">За выполненные работы</column>
+        </insert>
+        <insert tableName="payment_type">
+            <column name="id">3</column>
+            <column name="name">Возврат</column>
+        </insert>
+        <createSequence sequenceName="payment_type_seq" minValue="1000"/>
+
+        <createTable tableName="payment" remarks="Оплата">
+            <column name="id" type="numeric">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_payment"/>
+            </column>
+            <column name="payment_type_id" type="numeric" remarks="id типа оплаты">
+                <constraints nullable="false" referencedTableName="payment_type" referencedColumnNames="id" foreignKeyName="fk_payment_payment_type"/>
+            </column>
+            <column name="stage_number" type="varchar(255)" remarks="Номер этапа"/>
+            <column name="payment_date" type="timestamp" remarks="Дата оплаты"/>
+            <column name="payment_sum" type="float" remarks="Сумма оплаты"/>
+        </createTable>
+        <createSequence sequenceName="payment_seq" minValue="1000"/>
+
+        <createTable tableName="act" remarks="Акт">
+            <column name="id" type="numeric">
+                <constraints primaryKey="true" primaryKeyName="pk_act" nullable="false"/>
+            </column>
+            <column name="stage_id" type="numeric">
+                <constraints nullable="false" referencedTableName="stage" referencedColumnNames="id" foreignKeyName="fk_act_stage_id"/>
+            </column>
+            <column name="act_type" type="varchar(100)" remarks="Тип акта"/>
+            <column name="act_date" type="timestamp" remarks="Дата акта"/>
+            <column name="stage_number" type="varchar(255)" remarks="Номер этапа"/>
+            <column name="stage_price" type="float" remarks="Цена работ этапа"/>
+        </createTable>
+        <createSequence sequenceName="act_seq" minValue="1000"/>
+
     </changeSet>
 
 </databaseChangeLog>

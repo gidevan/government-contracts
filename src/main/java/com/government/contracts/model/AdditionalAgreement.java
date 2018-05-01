@@ -7,9 +7,6 @@ import javax.persistence.SequenceGenerator;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Created by vano on 29.4.18.
- */
 @Entity
 public class AdditionalAgreement implements Identifiable<Long> {
 
