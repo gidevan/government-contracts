@@ -1,6 +1,6 @@
 package com.government.contracts.repository;
 
-import com.government.contracts.model.Identifiable;
+import com.government.contracts.entity.Identifiable;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
-/**
- * Created by vano on 29.4.18.
- */
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)

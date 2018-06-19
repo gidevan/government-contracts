@@ -29,16 +29,12 @@
             </column>
             <column name="subject" type="varchar(1000)" remarks="Тема государственного контракта"/>
             <column name="contract_code" type="varchar(255)" remarks="Шифр государственного контракта"/>
-            <column name="stage_number" type="varchar(255)" remarks="Номер этапа"/>
-            <column name="stage_name" type="varchar(1000)" remarks="Наименование этапа"/>
-            <column name="stage_start_date" type="timestamp" remarks="Дата начала выполнения работ по этапу"/>
-            <column name="stage_end_date" type="timestamp" remarks="Дата окончания выполнения работ по этапу"/>
-            <column name="stage_price" type="float" remarks="Цена работ"/>
             <column name="contract_price" type="float" remarks="Твёрдая цена государственного контракта"/>
             <column name="okr_flag" type="boolean" remarks="Решение о прекращении ОКР"/>
             <column name="stop_okr_reason" type = "varchar(1000)" remarks="Причина решения опрекращении ОКР"/>
             <column name="contract_start_date" type="timestamp" remarks="Дата начала ГК"/>
             <column name="contract_end_date" type="timestamp" remarks="Дата окончания ГК"/>
+            <column name="version" type="numeric" remarks="Версия контракта"/>
         </createTable>
         <createSequence sequenceName="contract_seq" minValue="1000"/>
 
@@ -53,17 +49,18 @@
                 <constraints referencedTableName="contract" referencedColumnNames="id" foreignKeyName="fk_additional_agreement_contract"/>
             </column>
             <column name="contract_price" type="float" remarks="Твёрдая цена контракта"/>
-            <column name="stage_number" type="varchar(255)" remarks="Номер этапа"/>
-            <column name="stage_name" type="varchar(1000)" remarks="Наименование этапа"/>
             <column name="start_date" type="timestamp" remarks="Дата начала работ по этапу контракта"/>
             <column name="end_date" type="timestamp" remarks="Дата окончания работ по этапу контракта"/>
             <column name="price" type="float" remarks="Цена работ"/>
         </createTable>
-        <createSequence sequenceName="additional_agreement_seq"/>
+        <createSequence sequenceName="additional_agreement_seq" minValue="1000"/>
 
         <createTable tableName="stage_status"  remarks="Статус этапа">
             <column name="id" type="numeric" remarks="ID статуса этапа">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_stage_status"/>
+            </column>
+            <column name="stage_code" type="varchar(100)" remarks="Код статуса">
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="stage_name" type="varchar(100)" remarks="Наименование этапа">
                 <constraints nullable="false"/>
@@ -72,14 +69,17 @@
         <createSequence sequenceName="stage_name_seq" minValue="1000"/>
         <insert tableName="stage_status">
             <column name="id">1</column>
+            <column name="stage_code">CURRENT</column>
             <column name="stage_name">Текущий</column>
         </insert>
         <insert tableName="stage_status">
             <column name="id">2</column>
-            <column name="stage_name">Исключительный</column>
+            <column name="stage_code">DELETED</column>
+            <column name="stage_name">Исключённый</column>
         </insert>
         <insert tableName="stage_status">
             <column name="id">3</column>
+            <column name="stage_code">CLOSED</column>
             <column name="stage_name">Закрытый</column>
         </insert>
         <createSequence sequenceName="stage_status_seq" minValue="1000"/>
@@ -96,6 +96,7 @@
             <column name="contract_id" type="numeric" remarks="id контракта">
                 <constraints nullable="false" referencedTableName="contract" referencedColumnNames="id" foreignKeyName="fk_stage_contract_id"/>
             </column>
+            <column name="additional_agreement_id" type="numeric" remarks="id дополнительного соглашения"></column>
             <column name="start_date" type="timestamp" remarks="Начало"/>
             <column name="end_date" type="timestamp" remarks="Окончание"/>
             <column name="price" type="float" remarks="Цена работ"/>
@@ -106,18 +107,25 @@
             <column name="id" type="numeric">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_payment_type"/>
             </column>
+            <column name="code" type="varchar(100)" remarks="Код типа оплаты">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="name" type="varchar(100)"/>
+
         </createTable>
         <insert tableName="payment_type">
             <column name="id">1</column>
+            <column name="code">PREPAYMENT</column>
             <column name="name">Аванс</column>
         </insert>
         <insert tableName="payment_type">
             <column name="id">2</column>
+            <column name="code">COMPLETED_JOB</column>
             <column name="name">За выполненные работы</column>
         </insert>
         <insert tableName="payment_type">
             <column name="id">3</column>
+            <column name="code">REFUND</column>
             <column name="name">Возврат</column>
         </insert>
         <createSequence sequenceName="payment_type_seq" minValue="1000"/>
@@ -129,7 +137,9 @@
             <column name="payment_type_id" type="numeric" remarks="id типа оплаты">
                 <constraints nullable="false" referencedTableName="payment_type" referencedColumnNames="id" foreignKeyName="fk_payment_payment_type"/>
             </column>
-            <column name="stage_number" type="varchar(255)" remarks="Номер этапа"/>
+            <column name="stage_id" type="numeric">
+                <constraints nullable="false" referencedTableName="stage" referencedColumnNames="id" foreignKeyName="fk_act_stage_id"/>
+            </column>
             <column name="payment_date" type="timestamp" remarks="Дата оплаты"/>
             <column name="payment_sum" type="float" remarks="Сумма оплаты"/>
         </createTable>
@@ -139,8 +149,8 @@
             <column name="id" type="numeric">
                 <constraints primaryKey="true" primaryKeyName="pk_act" nullable="false"/>
             </column>
-            <column name="stage_id" type="numeric">
-                <constraints nullable="false" referencedTableName="stage" referencedColumnNames="id" foreignKeyName="fk_act_stage_id"/>
+            <column name="payment_id" type="numeric">
+                <constraints nullable="false" referencedTableName="payment" referencedColumnNames="id" foreignKeyName="fk_act_payment_id"/>
             </column>
             <column name="act_type" type="varchar(100)" remarks="Тип акта"/>
             <column name="act_date" type="timestamp" remarks="Дата акта"/>
@@ -148,6 +158,20 @@
             <column name="stage_price" type="float" remarks="Цена работ этапа"/>
         </createTable>
         <createSequence sequenceName="act_seq" minValue="1000"/>
+
+        <createTable tableName="stage_parent_info" remarks="Информация по предкам этапа. Заполняется при разделении или объединении этапов">
+            <column name = "id" type = "numeric">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_stage_parent"/>
+            </column>
+            <column name="stage_id" type="numeric" remarks="id этапа">
+                <constraints referencedTableName="stage" referencedColumnNames="id" foreignKeyName="fk_stage_parent_info_stage_id" nullable="false"/>
+            </column>
+            <column name="parent_stage_id" type="numeric" remarks="id родительского этапа">
+                <constraints nullable="false" referencedTableName="stage" referencedColumnNames="id" foreignKeyName="fk_stage_parent_info_parent_stage_id"/>
+            </column>
+            <column name="description" type="varchar(255)" remarks="Описание"/>
+        </createTable>
+        <createSequence sequenceName="stage_parent_info_seq" minValue="1000"/>
 
     </changeSet>
 

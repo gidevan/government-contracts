@@ -1,28 +1,35 @@
 package com.government.contracts.controller;
 
-import com.government.contracts.model.Contract;
+import com.government.contracts.dto.ResponseDto;
+import com.government.contracts.dto.contract.ContractFilterParams;
+import com.government.contracts.entity.Contract;
 import com.government.contracts.service.ContractService;
+import com.government.contracts.service.CrudService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-public class ContractController {
+@RequestMapping("contract")
+public class ContractController extends AbstractCrudController<Contract, Long> {
 
     @Autowired
     private ContractService contractService;
-
-    @RequestMapping("/info")
-    public String info() {
-        return "Contract controller info";
-    }
 
     @RequestMapping("/findByName/{name}")
     public List<Contract> findByName(@PathVariable("name") String name) {
         return contractService.findByName(name);
     }
 
+    @RequestMapping(value = "/find", method = RequestMethod.POST)
+    public ResponseEntity<ResponseDto> findContracts(@RequestBody ContractFilterParams params) {
+        return createCorrectResponse(contractService.findContracts(params));
+    }
+
+    @Override
+    protected CrudService<Contract, Long> getCrudService() {
+        return contractService;
+    }
 }

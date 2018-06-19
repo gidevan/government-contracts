@@ -1,6 +1,11 @@
 package com.government.contracts.repository;
 
-import com.government.contracts.model.*;
+import com.government.contracts.entity.*;
+import com.government.contracts.enums.PaymentTypeEnum;
+import com.government.contracts.repository.contract.ContractRepository;
+import com.government.contracts.repository.payment.PaymentRepository;
+import com.government.contracts.repository.stage.StageRepository;
+import com.government.contracts.repository.stage.StageStatusRepository;
 import com.government.contracts.utils.TestEntityFactory;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +20,7 @@ public class ActRepositoryTest extends AbstractRepositoryTest<Act, Long> {
     private static final String TEST_CONTRACT_NAME = "contractName";
     private static final String TEST_CONTRACT_CODE = "contractCode";
     private static final String TEST_STAGE_STATUS_NAME = "testStatusName";
+    private static final String TEST_STAGE_STATUS_CODE = "testStatusCode";
     private static final String TEST_STAGE_NAME = "testStageName";
     private static final String TEST_STAGE_NUMBER = "testStageNumber";
     private static final String TEST_INN = "testInn";
@@ -30,18 +36,26 @@ public class ActRepositoryTest extends AbstractRepositoryTest<Act, Long> {
     private ContractorRepository contractorRepository;
     @Autowired
     private ContractRepository contractRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentTypeRepository paymentTypeRepository;
 
     @Override
     protected Act createEntity() {
         Contract contract = createContract();
 
-        StageStatus stageStatus = TestEntityFactory.createStageStatus(TEST_STAGE_STATUS_NAME);
+        StageStatus stageStatus = TestEntityFactory.createStageStatus(TEST_STAGE_STATUS_NAME, TEST_STAGE_STATUS_CODE);
         StageStatus storedStatus = stageStatusRepository.save(stageStatus);
 
-        Stage stage = TestEntityFactory.createStage(storedStatus.getId(), contract.getId(), TEST_STAGE_NAME, TEST_STAGE_NUMBER);
+        Stage stage = TestEntityFactory.createStage(storedStatus, contract, TEST_STAGE_NAME, TEST_STAGE_NUMBER);
         Stage storedStage = stageRepository.save(stage);
 
-        Act act = TestEntityFactory.createAct(storedStage.getId(), TEST_ACT_TYPE, TEST_STAGE_NUMBER);
+        PaymentType completedType = paymentTypeRepository.findByCode(PaymentTypeEnum.COMPLETED_JOB.name());
+        Payment payment = TestEntityFactory.createPayment(completedType, storedStage);
+        Payment storedPayment = paymentRepository.save(payment);
+
+        Act act = TestEntityFactory.createAct(storedPayment, TEST_ACT_TYPE, TEST_STAGE_NUMBER);
         return act;
     }
 
@@ -55,7 +69,7 @@ public class ActRepositoryTest extends AbstractRepositoryTest<Act, Long> {
         Assert.assertEquals(TEST_ACT_TYPE, entity.getActType());
         Assert.assertNotNull(entity.getActDate());
         Assert.assertEquals(TEST_STAGE_NUMBER, entity.getStageNumber());
-        Assert.assertNotNull(entity.getStageId());
+        Assert.assertNotNull(entity.getPayment());
         Assert.assertEquals(TestEntityFactory.TEST_PRICE, entity.getStagePrice());
     }
 
@@ -64,7 +78,7 @@ public class ActRepositoryTest extends AbstractRepositoryTest<Act, Long> {
         Contractor savedContractor = contractorRepository.save(contractor);
         Assert.assertNotNull(savedContractor.getId());
         Contract contract = TestEntityFactory.createContract(TEST_CONTRACT_NAME, TEST_CONTRACT_NUMBER, TEST_CONTRACT_CODE);
-        contract.setContractorId(savedContractor.getId());
+        contract.setContractor(savedContractor);
 
         Contract savedContract = contractRepository.save(contract);
         Assert.assertNotNull(savedContract.getId());
